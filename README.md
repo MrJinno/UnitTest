@@ -12,6 +12,7 @@ The purpose of it is to show my knowledge about Unit Tests. [@ExerciseLink](http
 
 ## Technologies
 * JUnit - version 4.11
+* Streams
 
 ## Status
 Project is: _finished_
