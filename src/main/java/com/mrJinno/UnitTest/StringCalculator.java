@@ -6,33 +6,33 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 class StringCalculator {
-    private String regex;
+    private String delimiters;
     private String numbers;
     private List<String> delimiterList;
     private List<String> stringList;
+    private List<Integer> negativeNumbersList;
 
     int add(String numbersString) {
         this.numbers = numbersString;
         if (numbers.isEmpty()) return 0;
         setDelimiters();
-        stringList = Arrays.asList(numbers.split(regex));
+        stringList = Arrays.asList(numbers.split(delimiters));
         removeBlankSpotsFromStringList();
         List<Integer> numberList = createNumberListUnder1000(stringList);
-        lookForNegativeNumbers(numberList);
+        if (handleNegativeNumbers(numberList)) throwNegativeNumberException();
         return numberList.stream()
                 .mapToInt(number -> number)
                 .sum();
     }
 
     private void setDelimiters() {
-        regex = "[,\n]";
+        delimiters = "[,\n]";
         if (checkDelimiterInitializer()) {
-            if (checkBrackets()) {
+            if (checkDelimiterBrackets()) {
                 addDelimitersToDelimitersList();
-                regex = setRegexString();
-
+                delimiters = setRegexString();
             } else {
-                regex = numbers.substring(2, 3);
+                delimiters = numbers.substring(2, 3);
                 numbers = numbers.substring(4);
             }
         }
@@ -45,7 +45,7 @@ class StringCalculator {
         return false;
     }
 
-    private boolean checkBrackets() {
+    private boolean checkDelimiterBrackets() {
         for (int i = 0; i < numbers.length(); i++) {
             if (numbers.charAt(i) == '[') return true;
         }
@@ -81,15 +81,11 @@ class StringCalculator {
         regexBuilder.append("]");
         return regexBuilder.toString();
     }
-
+    
     private void removeBlankSpotsFromStringList() {
-        List<String> tempList = new ArrayList<>();
-        for (String s : stringList) {
-            if (!s.isEmpty()) {
-                tempList.add(s);
-            }
-        }
-        stringList = new ArrayList<>(tempList);
+        stringList= stringList.stream()
+                .filter(string->!string.isEmpty())
+                .collect(Collectors.toList());
     }
 
     private List<Integer> createNumberListUnder1000(List<String> stringList) {
@@ -99,16 +95,23 @@ class StringCalculator {
                 .collect(Collectors.toList());
     }
 
-    private void lookForNegativeNumbers(List<Integer> numberList) {
-        int minusNumbersCount = 0;
-        List<Integer> wrongNumbersList = new ArrayList<>();
+    private boolean handleNegativeNumbers(List<Integer> numberList) {
+        int negativeNumbersCount = 0;
+        negativeNumbersList = new ArrayList<>();
         for (int number : numberList) {
             if (number < 0) {
-                wrongNumbersList.add(number);
-                minusNumbersCount++;
+                negativeNumbersList.add(number);
+                negativeNumbersCount++;
             }
         }
-        if (minusNumbersCount > 0)
-            throw new IllegalArgumentException("Numbers must be higher than 0: " + wrongNumbersList);
+        return negativeNumbersCount > 0;
+    }
+
+    private void throwNegativeNumberException() {
+        throw new IllegalArgumentException("Numbers must be higher than 0: " + negativeNumbersList);
+    }
+
+    public List<Integer> getNegativeNumbersList() {
+        return negativeNumbersList;
     }
 }

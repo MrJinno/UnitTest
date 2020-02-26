@@ -13,52 +13,59 @@ public class StringCalculatorTest {
     }
 
     @Test
-    public void string8ShouldReturn8() {
+    public void stringOfNumberShouldReturnIt() {
         assertEquals(8, calculator.add("8"));
     }
 
     @Test
-    public void string4And5ShouldReturn9() {
+    public void stringOfTwoNumbersShouldReturnTheirSum() {
         assertEquals(9, calculator.add("4,5"));
     }
 
     @Test
-    public void string5And10And12And4ShouldReturn31() {
+    public void stringOfMoreThanTwoNumbersShouldReturnTheirSum() {
         assertEquals(31, calculator.add("5,10,12,4"));
     }
 
     @Test
-    public void string1AddedToNextLineString2And3ShouldReturn6() {
+    public void stringOfNumbersWithinManyLinesShouldReturnTheirSum() {
         assertEquals(6, calculator.add("1\n2,3"));
     }
 
     @Test
-    public void stringOfNumbers1And2SeparatedByNewDecimalShouldReturn3() {
+    public void stringOfNumbersWithNewSeparatorShouldReturnTheirSum() {
         assertEquals(3, calculator.add("//;\n1;2"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void stringOfNumbersMinus2and3ShouldThrowIllegalArgumentException() {
-        calculator.add("-2,3");
+    @Test
+    public void stringOfNegativeNumbersShouldThrowIllegalArgumentException() {
+        try {
+            calculator.add("-2,3");
+        }catch (IllegalArgumentException e){
+            String expectedMessage = "Numbers must be higher than 0: " + calculator.getNegativeNumbersList();
+            assertEquals(expectedMessage, e.getMessage());
+        } catch (Exception ex){
+            fail(String.format("Excepted IllegalArgumentException, but %s was thrown", ex.getClass().getName()));
+        }
     }
 
     @Test
-    public void stringOfNumbers1001And2ShouldReturn2() {
+    public void stringOfNumbersHigherThan1000ShouldBeIgnored() {
         assertEquals(2, calculator.add("1001,2"));
     }
 
     @Test
-    public void delimiterWithMoreThanOneCharShouldWork() {
+    public void separatorWithMoreThanOneCharShouldReturnSumOfNumbersInString() {
         assertEquals(6, calculator.add("//[***]\n1***2***3"));
     }
 
     @Test
-    public void twoDelimitersShouldWork() {
+    public void twoNewSeparatorsShouldReturnSumOfNumbersInString() {
         assertEquals(6, calculator.add("//[*][%]\n1*2%3"));
     }
 
     @Test
-    public void manyDelimitersWithMoreThanOneCharShouldWork() {
+    public void manySeparatorsWithMoreThanOneCharShouldReturnSumOfNumbersInString() {
         assertEquals(10, calculator.add("//[***][%%]\n1***2***3%%4\n0"));
     }
 }
