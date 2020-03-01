@@ -13,7 +13,7 @@ The purpose of it is to show my knowledge about Unit Tests. [@ExerciseLink](http
 ## Technologies
 * JUnit - version 4.11
 * Streams
-* Tests made according to TDD process
+* Tests carried out in accordance with the TDD process
 
 ## Status
 Project is: _finished_
